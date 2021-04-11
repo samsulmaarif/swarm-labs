@@ -115,7 +115,7 @@ services:
   drupal:
     image: drupal:8-apache
     ports:
-      - 8080:80
+      - 8081:80
     volumes:
       - drupal_modules:/var/www/html/modules
       - drupal_profiles:/var/www/html/profiles
@@ -130,10 +130,10 @@ services:
     restart: always
 
 volumes:
-  - drupal_modules
-  - drupal_profiles
-  - drupal_themes
-  - drupal_sites
+  drupal_modules:
+  drupal_profiles:
+  drupal_themes:
+  drupal_sites:
 
 ```
 
