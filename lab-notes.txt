@@ -1,0 +1,99 @@
+## Prasyarat
+
+- vagrant terinstall
+- virtualbox terinstall
+- git terinstall
+- sudah ditest di host Ubuntu 20.04 (4 CPU Core, 16GB RAM, 80GB ruang kosong SSD)
+
+
+## Clone repository ini
+
+git clone https://github.com/samsulmaarif/swarm-labs
+cd swarm-labs
+
+
+## Provision VM
+
+vagrant up
+
+vagrant status
+
+## akses ssh lab
+
+- node0
+
+vagrant ssh node0
+
+- node1, buka terminal lain
+
+vagrant ssh node1
+
+- node2, buka terminal lainnya lagi
+
+vagrant ssh node2
+
+## Hapus semua container (jika ada , di semua node node)
+
+docker rm -f $(docker ps -a -q)
+
+## node0, Inisiasi Cluster Manager Docker Swarm
+
+ip addr
+docker swarm init --advertise-addr [node_ip_address]
+
+## node1, node2, tambahkan node ke cluster swarm
+
+docker swarm join --token [your_swarm_token] [manager_node_ip_address]:2377
+
+## node0, mengelola cluster
+
+docker node ls
+
+docker node --help
+docker node inspect self --pretty
+docker node inspect [hostname-worker] --pretty
+
+## Promote manager
+
+docker node promote [name-node]
+docker node demote [name-node-leader]
+
+## Jalankan Visualizer
+
+docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
+
+# Buka browser [ip-manager]:8080
+
+
+## Running Services in the Docker Swarm
+
+docker service create -p 8090:80 --name webserver nginx
+docker service ls
+docker service ps webserver
+
+
+## Scale out
+
+docker service scale webserver=10
+docker service ps webserver
+
+
+## Deploy Sample App
+
+git clone https://github.com/docker/example-voting-app
+cd example-voting-app
+
+
+cat docker-stack.yml
+docker stack deploy --compose-file=docker-stack.yml voting_stack
+
+docker stack ls
+
+docker stack services voting_stack
+
+docker service ps voting_stack_vote
+
+docker service scale voting_stack_vote=5
+
+
+Ref: https://training.play-with-docker.com/ops-s1-swarm-intro/
